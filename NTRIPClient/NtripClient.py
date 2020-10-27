@@ -1,4 +1,4 @@
-#!/usr/bin/python -u
+#!/usr/bin/python2
 """
 This is heavily based on the NtripPerlClient program written by BKG.
 Then heavily based on a unavco original.
@@ -11,7 +11,7 @@ import base64
 import time
 #import ssl
 from optparse import OptionParser
-
+import serial
 
 version=0.2
 useragent="NTRIP JCMBsoftPythonClient/%.1f" % version
@@ -274,6 +274,8 @@ if __name__ == '__main__':
     else:
         ntripArgs['ssl']=False
 
+    print args
+
     if options.org:
         if len(args) != 1 :
             print "Incorrect number of arguments for IBSS\n"
@@ -344,6 +346,9 @@ if __name__ == '__main__':
         ntripArgs['headerFile']=h
         ntripArgs['headerOutput']=True
 
+    rtcm_serial = serial.Serial(port='/dev/ttyRTCM', baudrate=38400)
+    ntripArgs['out'] = rtcm_serial
+
     n = NtripClient(**ntripArgs)
     try:
         n.readData()
@@ -352,3 +357,5 @@ if __name__ == '__main__':
             f.close()
         if options.headerFile:
             h.close()
+
+# python2 NtripClient.py -H www.gnssdata.or.kr -u joejsy@gmail.com -p gnss 2101 SEOS-RTCM32
